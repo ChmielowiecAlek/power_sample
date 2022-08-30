@@ -4,3 +4,23 @@ It is a code sample based on the article "IMPEDANCE MATCHING CONTROLLER FOR AN I
 
 It's purpose is to practice complex-number computations in python.
 
+
+# How to use jupyter notebook
+
+  #virtualenv jupyterenv
+
+  cd notebook/
+
+  source jupyterenv/bin/activate
+
+  #pip install jupyter
+
+  #pip install matplotlib
+
+  jupyter notebook
+
+  deactivate
+
+  cd ..
+
+
