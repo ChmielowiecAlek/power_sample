@@ -1,2 +1,6 @@
 # power_sample
-A code sample
+
+It is a code sample based on the article "IMPEDANCE MATCHING CONTROLLER FOR AN INDUCTIVELY COUPLED PLASMA CHAMBER, L-type Matching Network Automatic Controller" by Giorgio Bacelli, John V. Ringwood and Petar Iordanov.
+
+It's purpose is to practice complex-number computations in python.
+
