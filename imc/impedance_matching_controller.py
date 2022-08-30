@@ -4,8 +4,8 @@ from imc import *
 class ImpedanceMatchingController:
     def __init__(self):
         self.mn = MatchingNetwork()
-        self.ctc = CoarseTuneController()
-        self.ftc = FineTuneController()
+        self.ctc = CoarseTuneController(self.mn)
+        self.ftc = FineTuneController(self.mn)
 
         # the fine controller uses a sampling period of 20ms
         # the coarse controller uses a sampling period of 100ms
@@ -13,6 +13,7 @@ class ImpedanceMatchingController:
 
     def run(self, fine_ticks):
         for tick in range(fine_ticks):
+            self.ftc.trigger_20()
             if (tick % self.tick_ratio) == 0:
                 self.ctc.trigger_100()
-            self.ftc.trigger_20()
+
