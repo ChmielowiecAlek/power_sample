@@ -1,11 +1,10 @@
-from matching_network import MatchingNetwork
+from imc import *
 
 
 class FineTuneController:
     def __init__(self, mn: MatchingNetwork):
         self.mn = mn
 
-    # the fine controller uses a sampling period of 20ms
     def trigger_20(self):
         gamma = self.mn.gamma()
 

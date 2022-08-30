@@ -1,6 +1,5 @@
 import math
-
-from matching_network import MatchingNetwork
+from imc import *
 
 
 class CoarseTuneController:
@@ -8,7 +7,6 @@ class CoarseTuneController:
         self.mn = mn
         self.gamma_1 = mn.gamma()  # previous gamma value
 
-    # the coarse controller uses a sampling period of 100ms
     def trigger_100(self):
         gamma = self.mn.gamma()
         change_ct_direction = math.abs(gamma) > math.abs(self.gamma_1)
