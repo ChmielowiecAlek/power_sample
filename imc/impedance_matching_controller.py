@@ -3,6 +3,7 @@ from imc import *
 
 class ImpedanceMatchingController:
     def __init__(self):
+        self.sensor = SensorSimulator()
         self.mn = MatchingNetwork()
         self.ctc = CoarseTuneController(self.mn)
         self.ftc = FineTuneController(self.mn)
@@ -13,6 +14,7 @@ class ImpedanceMatchingController:
 
     def run(self, fine_ticks):
         for tick in range(fine_ticks):
+            self.sensor.trigger()
             self.ftc.trigger_20()
             if (tick % self.tick_ratio) == 0:
                 self.ctc.trigger_100()

@@ -1,6 +1,4 @@
 import logging
-import math
-import logging
 from imc import *
 
 
@@ -15,10 +13,12 @@ class CoarseTuneController:
         gamma = self.mn.gamma()
 
         logging.info("|gamma_1|=%.E, |gamma|=%.E", abs(self.gamma_1), abs(gamma))
-        if abs(gamma) > abs(self.gamma_1):
+        if abs(gamma) - abs(self.gamma_1) > 0.002:
             self.ct_direction *= -1.0
             logging.info("changing direction to %f", self.ct_direction)
 
-        self.mn.update_tune(self.ct_direction * self.mn.ct)
+        gain = 0.1
+        factor = self.ct_direction * abs(gamma) * gain
+        self.mn.update_tune(factor * self.mn.ct )
 
         self.gamma_1 = gamma

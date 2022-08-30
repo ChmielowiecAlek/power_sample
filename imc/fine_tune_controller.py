@@ -17,5 +17,5 @@ class FineTuneController:
         ct_delta = -1.0 * gain * gamma.real
         self.mn.update_tune(ct_delta)
 
-        cl_delta = -1.0 * gain * gamma.imag
+        cl_delta = +1.0 * gain * gamma.imag
         self.mn.update_load(cl_delta)
