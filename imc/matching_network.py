@@ -57,48 +57,36 @@ class MatchingNetwork:
 
 
 class Theory:
-    def __init__(self, omega=2 * math.pi * 13.56e6, zo=complex(50, 0)):
+    def __init__(self, omega=2 * math.pi * 13.56e6, zo=complex(50, 0), zpl=complex(4e2, -42)):
         self.OMEGA: float = omega  # circular frequency
-        self.ZO: complex = zo  # transmission line impedance
+        self.ZO: complex = zo      # transmission line impedance
+        self.ZPL: complex = zpl    # impedance of the plasma
 
-    # plasma impedance
-    # def zpl(self):
-    #    zpl = complex.conjugate(self.zt + (self.ZO * self.zl) / (self.ZO + self.zl))
-    #    return zpl
-
-    def gamma(self, cl, ct):
+    def gamma(self, cl):
         zl = complex(1, 0) / complex(0, self.OMEGA * cl)
-        zt = complex(1, 0) / complex(0, self.OMEGA * ct)
         gamma: complex = (zl - self.ZO) / (zl + self.ZO)
         return gamma
 
-    def gamma_modulus(self, cl, ct):
-        return abs(self.gamma(cl, ct))
+    def gamma_modulus(self, cl):
+        return abs(self.gamma(cl))
+
+    # ct from given plasma impedance and particular cl
+    def _ct(self, cl):
+        zl = complex(1, 0) / complex(0, self.OMEGA * cl)
+        t1 = complex(self.ZO * zl) / complex(self.ZO + zl)
+        t2 = self.ZPL - complex.conjugate(t1)
+        zt = complex.conjugate(t2)
+        ct = complex(1, 0) / complex(0, self.OMEGA * zt)
+        return ct
 
     def calculate_function(self,
                            cl_min=600e-12, cl_max=1650e-12,
-                           ct_min=50e-12, ct_max=300e-12,
                            step=50e-12):
         x = np.arange(cl_min, cl_max, step)
-        y = np.arange(ct_min, ct_max, step)
+        y = np.array(self._ct(x))
         X, Y = np.meshgrid(x, y)
 
         z = np.array(self.gamma_modulus(np.ravel(X), np.ravel(Y)))
         Z = z.reshape(X.shape)
         return X, Y, Z
 
-
-        #array(list(map(self.gamma_modulus, x, y)))
-
-        #cl = cl_min
-        #while cl <= cl_max:
-        #    ct = ct_min
-        #    while ct <= ct_max:
-        #        print("cl=", cl, " ct=", ct)
-        #        x = np.append(x, cl)
-        #        y = np.append(y, ct)
-        #        z = np.append(z, abs(self.gamma(cl, ct)))
-        #
-        #        ct += step
-        #    cl += step
-        #
