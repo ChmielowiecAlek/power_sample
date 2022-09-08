@@ -5,22 +5,50 @@ It is a code sample based on the article "IMPEDANCE MATCHING CONTROLLER FOR AN I
 It's purpose is to practice complex-number computations in python.
 
 
-# How to use jupyter notebook
+# How to set-up the virtual environment
 
-  #virtualenv jupyterenv
+## for pycharm
+
+  python -m venv venv
+
+  source venv/bin/activate
+
+  pip install -r requirements.txt
+
+  deactivate
+
+
+## for jupyter notebook
+
+  cd notebook/
+
+  python -m venv jupyterenv
+
+  source jupyterenv/bin/activate
+
+  pip install -r requirements.txt
+
+  deactivate
+
+  cd ..
+
+# How to update requirements.txt
+
+  within a given virtual env
+
+  pip freeze > requirements.txt
+
+  and add it to git
+
+# How to run jupyter notebook
 
   cd notebook/
 
   source jupyterenv/bin/activate
-
-  #pip install jupyter
-
-  #pip install matplotlib
 
   jupyter notebook
 
   deactivate
 
   cd ..
-
 
