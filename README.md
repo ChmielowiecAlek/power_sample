@@ -1,9 +1,36 @@
-# power_sample
+# Introduction
 
-It is a code sample based on the article "IMPEDANCE MATCHING CONTROLLER FOR AN INDUCTIVELY COUPLED PLASMA CHAMBER, L-type Matching Network Automatic Controller" by Giorgio Bacelli, John V. Ringwood and Petar Iordanov.
+The aim of this code is to repeat the simulation results according to the following article:
 
-It's purpose is to practice complex-number computations in python.
+"IMPEDANCE MATCHING CONTROLLER FOR AN INDUCTIVELY COUPLED PLASMA CHAMBER, L-type Matching Network Automatic Controller"
 
+by Giorgio Bacelli, John V. Ringwood and Petar Iordanov.
+
+**This code sample is shared for the purpose of a recruitment process only. It has neither scientific nor practical value.**
+
+## Details
+
+By this exercise I've tried:
+
+  - to refresh knowledge on electrical engineering,
+
+  - to learn something about plasma power controllers,
+
+  - to prove general command of python by writing a sample code basing on the abovementioned article,
+
+  - to provide some tests cases using pytest,
+
+  - to show examples of using common libraries (numpy, matplotlib),
+
+  - to practice (complex-number) computations in python,
+
+  - to prove my expertise in PyCharm, venv, jupyter notebook and git.
+
+# Before committing to git
+
+  - update requirements.txt
+
+  - clean all jupyter notebook outputs
 
 # How to set-up the virtual environment
 
@@ -16,7 +43,6 @@ It's purpose is to practice complex-number computations in python.
   pip install -r requirements.txt
 
   deactivate
-
 
 ## for jupyter notebook
 
@@ -51,4 +77,3 @@ It's purpose is to practice complex-number computations in python.
   deactivate
 
   cd ..
-
