@@ -73,3 +73,16 @@ class MatchingNetwork:
         new_ct = self._ct + delta_ct
         new_ct = self.check_limits("CT", new_ct)
         self._ct = new_ct
+
+    # TODO: check usages - for coarse and fine tuning
+    # TODO: check the formula from notebook exercises
+    # TODO: implement a test for this method
+    def gamma(self):
+        cl = self.get_load_cap()
+        omega = self.OMEGA
+        zo = self.ZO
+
+        zl = Theory.zc(omega, cl)
+        gamma: complex = (zl - zo) / (zl + zo)
+        return gamma
+

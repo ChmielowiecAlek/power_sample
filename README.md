@@ -38,15 +38,19 @@ By this exercise I've tried:
 
   - update the project structure below
 
-# Current project structure
+# Project structure
 ```
 ./
 ├── imc/
+│   ├── coarse_tuner.py
+│   ├── controller.py
+│   ├── fine_tuner.py
 │   ├── impedance_tuner.py
 │   ├── matching_network.py
 │   └── tests/
-│     ├── test_impedance_tuner.py
-│     └── test_matching_network.py
+│       ├── test_impedance_tuner.py
+│       └── test_matching_network.py
+├── main.py
 └── notebook/
     └── reflection_function.ipynb
 ```
