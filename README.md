@@ -34,6 +34,25 @@ By this exercise I've tried:
 
   - clean all jupyter notebook outputs
 
+  - update this README.md
+
+  - update the project structure below
+
+# Current project structure
+```
+./
+├── imc/
+│   ├── impedance_tuner.py
+│   ├── matching_network.py
+│   └── tests/
+│     ├── test_impedance_tuner.py
+│     └── test_matching_network.py
+└── notebook/
+    └── reflection_function.ipynb
+```
+command: ```power_sample$ tree -F -P '*.py|*.ipynb' -I 'venv|jupyterenv|__pycache__|__init__.py|conftest.py'```
+
+
 # How to run tests
 
 Tests are written using the pytest framework.
@@ -44,9 +63,15 @@ Tests are written using the pytest framework.
 
   py.test
 
+  or a single test suite (e.g.):
+
+  power_sample$ py.test imc/tests/test_impedance_tuner.py
+
 ## in PyCharm
 
   select the test configuration and press the ▶ button
+
+  (a single test suite can also be run by right-clicking on the test file)
 
 # How to set-up the virtual environment
 
