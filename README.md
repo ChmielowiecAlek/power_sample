@@ -28,9 +28,25 @@ By this exercise I've tried:
 
 # Before committing to git
 
+  - all tests should pass
+
   - update requirements.txt
 
   - clean all jupyter notebook outputs
+
+# How to run tests
+
+Tests are written using the pytest framework.
+
+## in the terminal
+
+  (venv has to be activated)
+
+  py.test
+
+## in PyCharm
+
+  select the test configuration and press the ▶ button
 
 # How to set-up the virtual environment
 

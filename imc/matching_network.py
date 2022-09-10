@@ -1,92 +1,75 @@
 import logging
 import math
-import numpy as np
+from collections import namedtuple
+
+
+class Theory(object):
+    _Const = namedtuple("_Const", "COMPLEX_ONE")
+    const = _Const(complex(1, 0))
+
+    # this is a static class
+    def __init__(self):
+        raise NotImplementedError
+
+    # circular frequency
+    @staticmethod
+    def circular_freq(f):
+        return 2 * math.pi * f
+
+    # impedance of a capacitor: zero real part, negative imaginary part
+    @staticmethod
+    def zc(omega, c):
+        z = Theory.const.COMPLEX_ONE / complex(0, omega * c)
+        return z
 
 
 class MatchingNetwork:
-    def __init__(self):
-        self.OMEGA = 2 * math.pi * 13.56e6  # circular frequency
-        self.ZO = complex(50)  # transmission line impedance (== RF gen impedance)
-        self.cl = 1000e-12  # MN load capacitance
-        self.ct = 150e-12  # MN tune capacitance
+    def __init__(self, pgf=13.56e6, pgi=50):
+        self.POWER_GEN_FREQ = pgf  # [Hz] RF power generator standard
+        self.POWER_GEN_IMP = pgi  # [Ω] RF power generator impedance
 
-        # MN capacitance limits
-        self.CL_LIMITS = {"min": 600e-12, "max": 1600e-12}
-        logging.info("CL_LIMITS min=%.E", self.CL_LIMITS["min"])
-        logging.info("CL_LIMITS max=%.E", self.CL_LIMITS["max"])
-        self.CT_LIMITS = {"min": 50e-12, "max": 250e-12}
-        logging.info("CT_LIMITS min=%.E", self.CT_LIMITS["min"])
-        logging.info("CT_LIMITS max=%.E", self.CT_LIMITS["max"])
+        self.OMEGA = Theory.circular_freq(self.POWER_GEN_FREQ)  # [rad/s] circular frequency
+        self.ZO = complex(self.POWER_GEN_IMP)  # [Ω] transmission line impedance (== RF gen impedance)
 
-        # MN load impedance
-        self.zl = 0
-        self.update_load(0)
+        # initial values were taken from experiments (jupyter notebook)
+        self._cl = 700e-12  # [F] MN load capacitance
+        self._ct = 125e-12  # [F] MN tune capacitance
 
-        # MN tune impedance
-        self.zt = 0
-        self.update_tune(0)
+        # MN capacitance limits from Fig.6 in the article
+        _Limit = namedtuple("_Limit", "min max")
+        self._limits = {"CL": _Limit(600e-12, 1600e-12),
+                        "CT": _Limit(50e-12, 250e-12),
+                       }
+        logging.info("CL min=%.E", self._limits["CL"].min)
+        logging.info("CL max=%.E", self._limits["CL"].max)
+        logging.info("CT min=%.E", self._limits["CT"].min)
+        logging.info("CT max=%.E", self._limits["CT"].max)
 
-    def update_load(self, delta_cl):
-        logging.info("update_load called with delta_cl=%.E", delta_cl)
-        new_cl = self.cl + delta_cl
-        if new_cl < self.CL_LIMITS["min"]:
-            new_cl = self.CL_LIMITS["min"]
-            logging.warning('cl saturated on the lower limit')
-        elif new_cl > self.CL_LIMITS["max"]:
-            new_cl = self.CL_LIMITS["min"]
-            logging.warning('cl saturated on the upper limit')
-        self.cl = new_cl
-        self.zl = 1 / complex(0, self.OMEGA * self.cl)
-
-    def update_tune(self, delta_ct):
-        logging.info("update_tune called with delta_ct=%.E", delta_ct)
-        new_ct = self.ct + delta_ct
-        if new_ct < self.CT_LIMITS["min"]:
-            new_ct = self.CT_LIMITS["min"]
-            logging.warning('ct saturated on the lower limit')
-        elif new_ct > self.CT_LIMITS["max"]:
-            new_ct = self.CT_LIMITS["max"]
-            logging.warning('ct saturated on the upper limit')
-        self.ct = new_ct
-        self.zt = 1 / complex(0, self.OMEGA * self.ct)
-
-    # reflection coefficient
-    def gamma(self):
-        gamma: complex = (self.zl - self.ZO) / (self.zl + self.ZO)
-        return gamma
+    def check_limits(self, key, value):
+        saturated = value
+        if value < self._limits[key].min:
+            saturated = self._limits[key].min
+            logging.warning("%s saturated on the lower limit %.E", key, saturated)
+        elif value > self._limits[key].max:
+            saturated = self._limits[key].max
+            logging.warning("%s saturated on the upper limit %.E", key, saturated)
+        return saturated
 
 
-class Theory:
-    def __init__(self, omega=2 * math.pi * 13.56e6, zo=complex(50, 0), zpl=complex(4e2, -42)):
-        self.OMEGA: float = omega  # circular frequency
-        self.ZO: complex = zo      # transmission line impedance
-        self.ZPL: complex = zpl    # impedance of the plasma
+    def get_load_cap(self):
+        return self._cl
 
-    def gamma(self, cl):
-        zl = complex(1, 0) / complex(0, self.OMEGA * cl)
-        gamma: complex = (zl - self.ZO) / (zl + self.ZO)
-        return gamma
+    def get_tune_cap(self):
+        return self._ct
 
-    def gamma_modulus(self, cl):
-        return abs(self.gamma(cl))
+    def adjust_load(self, delta_cl):
+        logging.info("adjust_load called with delta_cl=%.E", delta_cl)
+        new_cl = self._cl + delta_cl
+        new_cl = self.check_limits("CL", new_cl)
+        self._cl = new_cl
 
-    # ct from given plasma impedance and particular cl
-    def _ct(self, cl):
-        zl = complex(1, 0) / complex(0, self.OMEGA * cl)
-        t1 = complex(self.ZO * zl) / complex(self.ZO + zl)
-        t2 = self.ZPL - complex.conjugate(t1)
-        zt = complex.conjugate(t2)
-        ct = complex(1, 0) / complex(0, self.OMEGA * zt)
-        return ct
-
-    def calculate_function(self,
-                           cl_min=600e-12, cl_max=1650e-12,
-                           step=50e-12):
-        x = np.arange(cl_min, cl_max, step)
-        y = np.array(self._ct(x))
-        X, Y = np.meshgrid(x, y)
-
-        z = np.array(self.gamma_modulus(np.ravel(X), np.ravel(Y)))
-        Z = z.reshape(X.shape)
-        return X, Y, Z
-
+    def adjust_tune(self, delta_ct):
+        logging.info("adjust_tune called with delta_ct=%.E", delta_ct)
+        new_ct = self._ct + delta_ct
+        new_ct = self.check_limits("CT", new_ct)
+        self._ct = new_ct
