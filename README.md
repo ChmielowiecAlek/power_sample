@@ -2,9 +2,7 @@
 
 The aim of this code is to repeat the simulation results according to the following article:
 
-"IMPEDANCE MATCHING CONTROLLER FOR AN INDUCTIVELY COUPLED PLASMA CHAMBER, L-type Matching Network Automatic Controller"
-
-by Giorgio Bacelli, John V. Ringwood and Petar Iordanov.
+Bacelli, Giorgio & Ringwood, John & Iordanov, Petar. (2007). Impedance matching controller for an inductively coupled plasma chamber - L-type matching network automatic controller.. ICINCO 2007 - 4th International Conference on Informatics in Control, Automation and Robotics, Proceedings. 202-207. 
 
 **This code sample is shared for the purpose of a recruitment process only. It has neither scientific nor practical value.**
 
@@ -42,14 +40,17 @@ By this exercise I've tried:
 ```
 ./
 ├── imc/
-│   ├── coarse_tuner.py
-│   ├── controller.py
-│   ├── fine_tuner.py
-│   ├── impedance_tuner.py
-│   ├── matching_network.py
-│   └── tests/
-│       ├── test_impedance_tuner.py
-│       └── test_matching_network.py
+│ ├── coarse_tuner.py
+│ ├── controller.py
+│ ├── fine_tuner.py
+│ ├── impedance_tuner.py
+│ ├── matching_network.py
+│ └── tests/
+│     ├── test_coarse_tuner.py
+│     ├── test_controller.py
+│     ├── test_fine_tuner.py
+│     ├── test_impedance_tuner.py
+│     └── test_matching_network.py
 ├── main.py
 └── notebook/
     └── reflection_function.ipynb
@@ -122,3 +123,44 @@ Tests are written using the pytest framework.
   deactivate
 
   cd ..
+
+# TODO
+
+## matching_network.gamma()
+  - verify usages, it is used for both coarse and fine tuning
+  - check (4) against the formula from notebook exercises
+
+## coarse_tuner._trigger_impl()
+  - check whether it is triggered every fifth tick
+  - verify whether it is ok to take the gamma basing on the load capacitor, or a sensor simulator is needed
+
+## fine_tuner._trigger_impl()
+  - in my opinion the formula (4) from the article is valid only for a coarse tuning, but it is also used here
+
+## main()
+  - currently it does not correctly simulate the circuit from Fig. (8) in the article
+
+# Misc
+
+## How to use octave (e.g.)
+```
+octave:1> output_precision(8)
+octave:2> omega = 2 * pi * 13.56e6
+omega = 8.5199993e+07
+octave:3> c = 150e-12
+c = 1.5000000e-10
+octave:4> term = i * omega * c
+term =            0 + 0.012779999i
+octave:5> z = 1 / term
+z =           0 - 78.2472680i
+```
+
+## How to push to git
+```git push --tags origin main```
+
+## Experimental results from notebook
+
+ZPL values that give something like Fig. 6 (coarse tuning, e.g.)
+
+ZPL=(5.0, 109.0)  min(|Γ|)=0.01  Cl=700pF  Ct=125pF
+

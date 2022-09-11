@@ -9,7 +9,7 @@ class Controller:
 
         # the fine controller uses a sampling period of 20ms
         # the coarse controller uses a sampling period of 100ms
-        self.tick_ratio = 100 / 20
+        self.tick_ratio = int(100 / 20)
 
     def run(self, fine_ticks):
         for tick in range(fine_ticks):

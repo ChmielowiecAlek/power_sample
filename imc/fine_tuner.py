@@ -7,10 +7,8 @@ class FineTuner(ImpedanceTuner):
         super(FineTuner, self).__init__(_matching_network, 1)
 
     # it uses gamma value from formula (4) from the article
-    # which in my opinion is valid only for a coarse tuning
-    # TODO: maybe something is wrong
     def _trigger_impl(self):
-        logging.info("In FineTuneController.trigger_20")
+        logging.info("In FineTuneController._trigger_impl")
         gamma = self.matching_network.gamma()
         logging.info("gamma=%.E+j%.E", gamma.real, gamma.imag)
 

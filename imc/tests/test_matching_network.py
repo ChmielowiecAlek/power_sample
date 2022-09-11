@@ -108,3 +108,16 @@ def test_matching_network_adjust_load(matching_network):
     assert matching_network.get_load_cap() == pytest.approx(EXPECTED_INITIAL_CL + delta_cl, 1e-30)
     matching_network.adjust_load(-2 * delta_cl)
     assert matching_network.get_load_cap() == pytest.approx(EXPECTED_INITIAL_CL - delta_cl, 1e-30)
+
+
+def test_matching_network_gamma(matching_network):
+    omega = matching_network.OMEGA
+    cl = matching_network.get_load_cap()
+    zo = matching_network.ZO
+
+    zl = Theory.zc(omega, cl)
+    expected = (zl - zo) / (zl + zo)
+
+    gamma = matching_network.gamma()
+    assert gamma == pytest.approx(expected, 1e-15)
+

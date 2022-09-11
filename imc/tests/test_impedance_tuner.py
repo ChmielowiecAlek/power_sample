@@ -1,5 +1,5 @@
 import pytest
-
+from unittest.mock import patch
 from imc import MatchingNetwork, ImpedanceTuner
 
 
@@ -42,3 +42,14 @@ def test_impedance_tuner_trigger(impedance_tuner):
     for i in range(0, count):
         impedance_tuner.trigger()
     assert impedance_tuner.trigger_count == int(count / impedance_tuner.triggering_ratio)
+
+
+@patch.object(ImpedanceTunerImpl, '_trigger_impl')
+def test_impedance_tuner_trigger_mocked(trigger_mock, impedance_tuner):
+    assert ImpedanceTunerImpl._trigger_impl is trigger_mock
+    assert impedance_tuner._trigger_impl is trigger_mock
+    for i in range(impedance_tuner.triggering_ratio - 1):
+        impedance_tuner.trigger()
+    assert trigger_mock.call_count == 0
+    impedance_tuner.trigger()
+    assert trigger_mock.call_count == 1
